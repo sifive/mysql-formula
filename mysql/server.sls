@@ -34,7 +34,7 @@ mysql_debconf:
 {% elif os_family in ['RedHat', 'Suse'] %}
 mysql_root_password:
   cmd.run:
-    - name: mysqladmin --user {{ mysql_root_user }} password '{{ mysql_root_password|replace("'", "'\"'\"'") }}'
+    - name: mysqladmin --user {{ mysql_root_user }} password '{{ mysql_root_password }}'
     - unless: mysql --user {{ mysql_root_user }} --password='{{ mysql_root_password|replace("'", "'\"'\"'") }}' --execute="SELECT 1;"
     - require:
       - service: mysqld
