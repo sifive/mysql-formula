@@ -114,7 +114,8 @@ mysql_initialize_script:
     - template: jinja
     - source: salt://mysql/files/debian-init.sh
     - context:
-        mysql_data_dir: {{ mysql_data_dir }}
+        mysql_datadir: {{ mysql_datadir }}
+        mysql_root_user: {{ mysql_root_user }}
     - mode: 0700
     - user: 'root'
     - group: 'root'
