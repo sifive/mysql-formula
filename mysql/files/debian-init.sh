@@ -3,6 +3,7 @@
 service mysql stop
 mysqld --initialize-insecure --user=mysql --basedir=/usr --datadir={{ mysql_datadir }}
 
+service mysql start
 pass=`grep '^password' /etc/mysql/debian.cnf  | head -1 | awk '{ print $3}'`
 mysql -B -N <<EOF
 USE mysql;
