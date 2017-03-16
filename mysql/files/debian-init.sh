@@ -10,4 +10,4 @@ GRANT ALL ON *.* TO 'debian-sys-maint'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOF
 
-mysqladmin --user {{ mysql_root_user }} password \'$1\'
+mysqladmin --user {{ mysql_root_user }} password \'${1}\'
