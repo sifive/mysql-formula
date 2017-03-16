@@ -121,6 +121,11 @@ mysql_initialize_script:
     - group: 'root'
 
 mysql_initialize:
+  file.directory:
+    - name: {{ mysql_datadir }}
+    - user: mysql
+    - group: mysql
+    - makedirs: True
   cmd.run:
     - name: /var/lib/mysql-files/debian-init.sh {{ mysql_root_password }}
     - user: root
@@ -128,6 +133,7 @@ mysql_initialize:
     - require:
       - pkg: {{ mysql.server }}
       - file: mysql_initialize_script
+      - file: mysql_initialize
     - require_in:
       - service: mysqld
 
