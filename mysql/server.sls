@@ -121,7 +121,7 @@ mysql_initialize_script:
 
 mysql_initialize:
   cmd.run:
-    - name: /var/lib/mysql-files/debian-init.sh {{{ mysql_root_password|replace("'", "'\"'\"'") }}
+    - name: /var/lib/mysql-files/debian-init.sh {{ mysql_root_password|replace("'", "'\"'\"'") }}
     - user: root
     - creates: {{ mysql_datadir}}/mysql/
     - require:
