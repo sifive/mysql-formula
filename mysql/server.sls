@@ -64,8 +64,8 @@ mysql_delete_anonymous_user_{{ host }}:
 {% endif %}
 {% endif %}
 
+{% if os_family == 'Arch' %}
 # on arch linux: inital mysql datadirectory is not created
-# also needs to be created if we have a non-standard mysql datadirectory
 mysql_install_datadir:
   cmd.run:
 {% if mysql.version is defined and mysql.version >= 5.7 %}
@@ -82,6 +82,7 @@ mysql_install_datadir:
       - file: mysql_config
     - require_in:
       - service: mysqld
+{% endif %}
 
 mysqld-packages:
   pkg.installed:
@@ -103,6 +104,36 @@ mysql_initialize:
     - require:
       - pkg: {{ mysql.server }}
 {% endif %}
+
+{% if os_family in ['Debian'] and mysql_datadir != mysql.config.sections.mysqld.datadir %}
+# Non-default datadir on Debian
+
+mysql_initialize_script:
+  file.managed:
+    - name: /var/lib/mysql-files/debian-init.sh
+    - template: jinja
+    - source: salt://mysql/files/debian-init.sh
+    - context:
+        mysql_data_dir: {{ mysql_data_dir }}
+    - mode: 0700
+    - user: 'root'
+    - group: 'root'
+
+mysql_initialize:
+  cmd.run:
+    - name: /var/lib/mysql-files/debian-init.sh {{{ mysql_root_password|replace("'", "'\"'\"'") }}
+    - user: root
+    - creates: {{ mysql_datadir}}/mysql/
+    - require:
+      - pkg: {{ mysql.server }}
+      - file: mysql_initialize_script
+    - require_in:
+      - service: mysqld
+
+
+{% endif %}  {# End of debian non-default datadir #}
+
+
 
 {% if os_family in ['RedHat', 'Suse'] and mysql.server == 'mariadb-server' %}
 # For MariaDB it's enough to only create the datadir
