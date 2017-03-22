@@ -126,6 +126,7 @@ mysql_initialize:
     - user: mysql
     - group: mysql
     - makedirs: True
+{#
   cmd.run:
     - name: /var/lib/mysql-files/debian-init.sh {{ mysql_root_password }}
     - user: root
@@ -136,6 +137,7 @@ mysql_initialize:
       - file: mysql_initialize
     - require_in:
       - service: mysqld
+#}
 
 
 {% endif %}  {# End of debian non-default datadir #}
