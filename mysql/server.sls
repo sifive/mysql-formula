@@ -125,6 +125,7 @@ mysql_initialize:
     - name: {{ mysql_datadir }}
     - user: mysql
     - group: mysql
+    - mode: '0755'
     - makedirs: True
 {#
   cmd.run:
