@@ -34,7 +34,7 @@ mysql_debconf:
 {% elif os_family in ['RedHat', 'Suse'] %}
 mysql_root_password:
   cmd.run:
-    - name: mysqladmin --user {{ mysql_root_user }} password '{{ mysql_root_password }}'
+    - name: mysqladmin --user {{ mysql_root_user }} password '{{ mysql_root_password|replace("'", "'\"'\"'") }}'
     - unless: mysql --user {{ mysql_root_user }} --password='{{ mysql_root_password|replace("'", "'\"'\"'") }}' --execute="SELECT 1;"
     - require:
       - service: mysqld
@@ -104,46 +104,6 @@ mysql_initialize:
     - require:
       - pkg: {{ mysql.server }}
 {% endif %}
-
-{% if os_family in ['Debian'] and mysql_datadir != mysql.config.sections.mysqld.datadir %}
-# Non-default datadir on Debian
-
-mysql_initialize_script:
-  file.managed:
-    - name: /var/lib/mysql-files/debian-init.sh
-    - template: jinja
-    - source: salt://mysql/files/debian-init.sh
-    - context:
-        mysql_datadir: {{ mysql_datadir }}
-        mysql_root_user: {{ mysql_root_user }}
-    - mode: 0700
-    - user: 'root'
-    - group: 'root'
-
-mysql_initialize:
-  file.directory:
-    - name: {{ mysql_datadir }}
-    - user: mysql
-    - group: mysql
-    - mode: '0755'
-    - makedirs: True
-{#
-  cmd.run:
-    - name: /var/lib/mysql-files/debian-init.sh {{ mysql_root_password }}
-    - user: root
-    - creates: {{ mysql_datadir}}/mysql/
-    - require:
-      - pkg: {{ mysql.server }}
-      - file: mysql_initialize_script
-      - file: mysql_initialize
-    - require_in:
-      - service: mysqld
-#}
-
-
-{% endif %}  {# End of debian non-default datadir #}
-
-
 
 {% if os_family in ['RedHat', 'Suse'] and mysql.server == 'mariadb-server' %}
 # For MariaDB it's enough to only create the datadir

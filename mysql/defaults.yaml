@@ -306,8 +306,6 @@ Gentoo:
       mysqldump:
         character_sets_dir: /usr/share/mysql/charsets
         default_character_set: utf8
-        quick: noarg_present
-        max_allowed_packet: 16M
       mysqlimport:
         character_sets_dir: /usr/share/mysql/charsets
         default_character_set: utf8
@@ -357,6 +355,9 @@ Gentoo:
         innodb_flush_log_at_trx_commit: 1
         innodb_lock_wait_timeout: 50
         innodb_file_per_table: noarg_present
+      mysqldump:
+        quick: noarg_present
+        max_allowed_packet: 16M
       isamchk:
         key_buffer: 20M
         sort_buffer_size: 20M
